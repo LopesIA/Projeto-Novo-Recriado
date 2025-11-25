@@ -29,28 +29,61 @@ window.onpopstate = function(event) {
     document.getElementById('overlay-anuncio').style.display = 'none';
 };
 
-// --- LÓGICA DE ANÚNCIO (O Pulo do Gato) ---
-function prepararCalculo(tipo) {
+// --- IDS DO ADMOB REAIS ---
+// ID de Aplicativo: ca-app-pub-6433933199186509~7781055152
+// ID do Bloco Intersticial: ca-app-pub-6433933199186509/1330470525
+
+const ADMOB_APP_ID = 'ca-app-pub-6433933199186509~7781055152'; 
+const ADMOB_INTERSTITIAL_ID = 'ca-app-pub-6433933199186509/1330470525'; 
+
+let calculoPendente = null;
+
+// Esta é a função que será chamada quando o usuário clicar em "CALCULAR"
+async function prepararCalculo(tipo) {
     calculoPendente = tipo;
 
-    // 1. Valida antes de mostrar anúncio
     if (!validarCampos(tipo)) return;
 
-    // 2. Mostra o Overlay (Simula Interstitial)
-    const overlay = document.getElementById('overlay-anuncio');
-    overlay.style.display = 'flex';
+    // 1. Tenta carregar e exibir o anúncio nativo (AdMob)
+    if (window.AdMob) {
+        try {
+            // Garante que o AdMob está inicializado com o seu ID
+            await AdMob.initialize({ appId: ADMOB_APP_ID });
+            
+            // 1.1. Carrega o Interstitial
+            await AdMob.interstitial.load({ id: ADMOB_INTERSTITIAL_ID });
+            
+            // 1.2. Cria um evento para saber quando o anúncio fechar
+            AdMob.addListener('interstitial.dismiss', () => {
+                executarCalculo(calculoPendente);
+                AdMob.removeAllListeners(); 
+            });
+            
+            // 1.3. Mostra o anúncio
+            await AdMob.interstitial.show();
 
-    // 3. Trava o botão de fechar
-    const btnFechar = document.getElementById('btn-fechar-anuncio');
-    btnFechar.style.opacity = '0'; 
-    btnFechar.style.pointerEvents = 'none'; // Impede clique
+        } catch (e) {
+            console.error("Erro ao mostrar AdMob. Mostrando resultado direto.", e);
+            executarCalculo(calculoPendente);
+        }
+    } else {
+        // 2. Se for a versão Web (sem o plugin do AdMob), usa a simulação antiga
+        
+        const overlay = document.getElementById('overlay-anuncio');
+        overlay.style.display = 'flex';
 
-    // 4. Libera o botão após 3 segundos
-    setTimeout(() => {
-        btnFechar.style.opacity = '1';
-        btnFechar.style.pointerEvents = 'all';
-    }, 3000);
+        const btnFechar = document.getElementById('btn-fechar-anuncio');
+        btnFechar.style.opacity = '0';
+        btnFechar.style.pointerEvents = 'none';
+
+        // Libera o botão de fechar após 3 segundos
+        setTimeout(() => {
+            btnFechar.style.opacity = '1';
+            btnFechar.style.pointerEvents = 'all';
+        }, 3000); 
+    }
 }
+// Mantenha o restante do seu script.js
 
 function fecharAnuncioE_MostrarResultado() {
     document.getElementById('overlay-anuncio').style.display = 'none';
