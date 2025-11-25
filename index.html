@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Cálculo Certo CLT</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0c0c0c">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-SEU_ID_AQUI" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <span>Cálculo Certo</span> <span class="dourado">CLT</span>
+        </div>
+    </header>
+
+    <main id="home-screen">
+        <p class="intro">Selecione o cálculo desejado:</p>
+        
+        <div class="grid-menu">
+            <div class="card" onclick="abrirModal('modal-salario')">
+                <div class="icon">💰</div>
+                <h3>Salário Líquido</h3>
+                <p>Descubra quanto cai na conta.</p>
+            </div>
+
+            <div class="card" onclick="abrirModal('modal-ferias')">
+                <div class="icon">🏖️</div>
+                <h3>Férias</h3>
+                <p>Calcule o valor + 1/3.</p>
+            </div>
+
+            <div class="card" onclick="abrirModal('modal-decimo')">
+                <div class="icon">🎁</div>
+                <h3>13º Salário</h3>
+                <p>Primeira e segunda parcela.</p>
+            </div>
+
+            <div class="card" onclick="abrirModal('modal-rescisao')">
+                <div class="icon">🚪</div>
+                <h3>Rescisão</h3>
+                <p>Simulação de saída.</p>
+            </div>
+        </div>
+
+        <div class="ad-banner">
+            <p>Publicidade</p>
+            </div>
+    </main>
+
+    <div id="modal-salario" class="modal">
+        <div class="modal-header">
+            <button class="btn-voltar" onclick="fecharModal()">← Voltar</button>
+            <h2>Salário Líquido</h2>
+        </div>
+        <div class="modal-content">
+            <label>Salário Bruto (R$)</label>
+            <input type="number" id="salario-bruto" placeholder="Ex: 2500.00">
+            
+            <label>Número de Dependentes</label>
+            <input type="number" id="dependentes" value="0">
+
+            <label>Outros Descontos (R$)</label>
+            <input type="number" id="outros-descontos" value="0">
+
+            <button class="btn-calcular" onclick="calcularSalarioLiquido()">CALCULAR AGORA</button>
+
+            <div id="resultado-salario" class="resultado-box" style="display:none;">
+                <div class="res-row"><span>INSS:</span> <span id="res-inss" class="vermelho">- R$ 0,00</span></div>
+                <div class="res-row"><span>IRRF:</span> <span id="res-irrf" class="vermelho">- R$ 0,00</span></div>
+                <div class="res-row total"><span>Líquido:</span> <span id="res-liquido" class="verde">R$ 0,00</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-ferias" class="modal">
+        <div class="modal-header">
+            <button class="btn-voltar" onclick="fecharModal()">← Voltar</button>
+            <h2>Férias</h2>
+        </div>
+        <div class="modal-content">
+            <label>Salário Bruto (R$)</label>
+            <input type="number" id="ferias-salario" placeholder="Ex: 2000.00">
+            
+            <label>Dias de Férias</label>
+            <input type="number" id="ferias-dias" value="30">
+
+            <label>Vender Férias (Abono)?</label>
+            <select id="ferias-vender">
+                <option value="nao">Não</option>
+                <option value="sim">Sim (10 dias)</option>
+            </select>
+
+            <button class="btn-calcular" onclick="calcularFerias()">CALCULAR AGORA</button>
+
+            <div id="resultado-ferias" class="resultado-box" style="display:none;">
+                <div class="res-row total"><span>Total a Receber:</span> <span id="res-total-ferias" class="verde">R$ 0,00</span></div>
+                <p class="obs">*Valor estimado com desconto de INSS/IRRF padrão.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-decimo" class="modal">
+        <div class="modal-header">
+            <button class="btn-voltar" onclick="fecharModal()">← Voltar</button>
+            <h2>13º Salário</h2>
+        </div>
+        <div class="modal-content">
+            <label>Salário Bruto (R$)</label>
+            <input type="number" id="decimo-salario" placeholder="Ex: 3000.00">
+            
+            <label>Meses trabalhados no ano</label>
+            <input type="number" id="decimo-meses" value="12" max="12">
+
+            <button class="btn-calcular" onclick="calcularDecimo()">CALCULAR AGORA</button>
+
+            <div id="resultado-decimo" class="resultado-box" style="display:none;">
+                <div class="res-row"><span>1ª Parcela:</span> <span id="res-decimo-1" class="verde">R$ 0,00</span></div>
+                <div class="res-row"><span>2ª Parcela:</span> <span id="res-decimo-2" class="verde">R$ 0,00</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-rescisao" class="modal">
+        <div class="modal-header">
+            <button class="btn-voltar" onclick="fecharModal()">← Voltar</button>
+            <h2>Rescisão</h2>
+        </div>
+        <div class="modal-content">
+            <label>Salário Base (R$)</label>
+            <input type="number" id="resc-salario">
+            
+            <label>Motivo</label>
+            <select id="resc-motivo">
+                <option value="sem_justa_causa">Demissão sem Justa Causa</option>
+                <option value="pedido_demissao">Pedido de Demissão</option>
+            </select>
+
+            <label>Saldo FGTS (aprox)</label>
+            <input type="number" id="resc-fgts" value="0">
+
+            <button class="btn-calcular" onclick="calcularRescisao()">CALCULAR AGORA</button>
+
+            <div id="resultado-rescisao" class="resultado-box" style="display:none;">
+                <div class="res-row total"><span>Total Estimado:</span> <span id="res-total-rescisao" class="verde">R$ 0,00</span></div>
+                <p class="obs">*Valor aproximado. Consulte seu contador.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+            .then(() => console.log('Service Worker Registrado'));
+        }
+    </script>
+</body>
+</html>
