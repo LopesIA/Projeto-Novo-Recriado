@@ -6,7 +6,7 @@
     "navalha-de-ouro-v11": {
       "hosting": {
         "calculo-app": [
-          "calculocertoclt.web.app"
+          "calculocertoclt"
         ]
       }
     }
